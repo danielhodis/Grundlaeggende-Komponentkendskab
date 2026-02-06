@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Electronics Flashcards</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f4f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+h2 {
+  margin-bottom: 10px;
+}
+
+.container {
+  perspective: 1000px;
+}
+
+.card {
+  display: none;
+}
+
+.card.active {
+  display: block;
+}
+
+.inner {
+  position: relative;
+  width: 450px;
+  height: 280px;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.card.flipped .inner {
+  transform: rotateY(180deg);
+}
+
+.front, .back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  font-size: 20px;
+  text-align: center;
+}
+
+.front {
+  background: white;
+}
+
+.back {
+  background: #dfe9ff;
+  transform: rotateY(180deg);
+}
+
+.controls {
+  margin-top: 20px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 14px;
+  margin: 0 8px;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  background: #4a6cff;
+  color: white;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.progress {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Electronics Flashcards</h2>
+
+<div class="container">
+
+  <div class="card active">
+    <div class="inner" onclick="flipCard(this)">
+      <div class="front">What is a resistor?</div>
+      <div class="back">A component that limits electric current.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="inner" onclick="flipCard(this)">
+      <div class="front">Unit of resistance?</div>
+      <div class="back">Ohm (Ω)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="inner" onclick="flipCard(this)">
+      <div class="front">What does a capacitor store?</div>
+      <div class="back">Electrical energy in an electric field.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="controls">
+  <button onclick="prevCard()">Previous</button>
+  <button onclick="nextCard()">Next</button>
+  <button onclick="shuffleCards()">Shuffle</button>
+</div>
+
+<div class="progress" id="progress"></div>
+
+<script>
+let current = 0;
+const cards = document.querySelectorAll('.card');
+const progress = document.getElementById('progress');
+
+let order = [...Array(cards.length).keys()];
+
+function updateProgress() {
+  progress.textContent = "Card " + (current + 1) + " / " + cards.length;
+}
+
+function showCard(index) {
+  cards.forEach(card => {
+    card.classList.remove('active');
+    card.classList.remove('flipped');
+  });
+  cards[order[index]].classList.add('active');
+  updateProgress();
+}
+
+function nextCard() {
+  current = (current + 1) % cards.length;
+  showCard(current);
+}
+
+function prevCard() {
+  current = (current - 1 + cards.length) % cards.length;
+  showCard(current);
+}
+
+function flipCard(element) {
+  element.parentElement.classList.toggle('flipped');
+}
+
+function shuffleCards() {
+  for (let i = order.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  current = 0;
+  showCard(current);
+}
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === "ArrowRight") nextCard();
+  if (event.key === "ArrowLeft") prevCard();
+});
+
+showCard(current);
+</script>
+
+</body>
+</html>
